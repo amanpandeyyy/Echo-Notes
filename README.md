@@ -3,18 +3,7 @@
 
 Echo-Notes is an enterprise-grade meeting intelligence workstation that ingests YouTube lectures, team syncs, and uploaded audio/video files, transcribes them with Whisper & Sarvam AI, extracts concise bullet summaries, decisions, action items, and open questions via Mistral AI & LangChain, stores vector embeddings in ChromaDB, and delivers an interactive transcript player, grounded RAG Q&A with timestamp citations, and PDF/DOCX/CSV reports.
 
----
-
-## 🌐 Live Cloud Deployment
-
-| Component | Status | URL |
-|---|---|---|
-| **Production Backend (Render)** | 🟢 Online | [https://echo-notes-s96t.onrender.com](https://echo-notes-s96t.onrender.com) |
-| **Interactive API Docs (Swagger UI)** | 🟢 Available | [https://echo-notes-s96t.onrender.com/docs](https://echo-notes-s96t.onrender.com/docs) |
-| **Backend Health Check** | 🟢 Healthy | [https://echo-notes-s96t.onrender.com/api/health](https://echo-notes-s96t.onrender.com/api/health) |
-| **GitHub Repository** | 📦 Public | [amanpandeyyy/Echo-Notes](https://github.com/amanpandeyyy/Echo-Notes) |
-
----
+--
 
 ## 🌟 Key Features
 
