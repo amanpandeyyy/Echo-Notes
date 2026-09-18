@@ -42,7 +42,7 @@ import type {
   ChatMessage,
   PersonaType
 } from '../types';
-import { api } from '../services/api';
+import { api, BACKEND_URL } from '../services/api';
 import { AcademicStudyNotes } from './AcademicStudyNotes';
 
 interface MeetingDetailViewProps {
@@ -369,7 +369,7 @@ export const MeetingDetailView: React.FC<MeetingDetailViewProps> = ({
             <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/60 flex items-center gap-4">
               <audio
                 ref={audioRef}
-                src={meeting.audio_path ? `/static/uploads/${meeting.audio_path.split(/[\\/]/).pop()}` : undefined}
+                src={meeting.audio_path ? `${BACKEND_URL}/static/uploads/${meeting.audio_path.split(/[\\/]/).pop()}` : undefined}
                 onTimeUpdate={handleTimeUpdate}
                 onEnded={() => setIsPlaying(false)}
               />
@@ -401,7 +401,7 @@ export const MeetingDetailView: React.FC<MeetingDetailViewProps> = ({
           <div className="p-5 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center gap-4">
             <audio
               ref={audioRef}
-              src={meeting.audio_path ? `/static/uploads/${meeting.audio_path.split(/[\\/]/).pop()}` : undefined}
+              src={meeting.audio_path ? `${BACKEND_URL}/static/uploads/${meeting.audio_path.split(/[\\/]/).pop()}` : undefined}
               onTimeUpdate={handleTimeUpdate}
               onEnded={() => setIsPlaying(false)}
             />

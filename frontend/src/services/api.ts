@@ -5,8 +5,8 @@ import type {
   SystemStatus,
   PersonaType
 } from '../types';
-
-const API_BASE = '/api';
+export const BACKEND_URL = (import.meta.env.VITE_BACKEND_URL || 'https://echo-notes-s96t.onrender.com').replace(/\/+$/, '');
+export const API_BASE = `${BACKEND_URL}/api`;
 
 export const api = {
   // Meetings

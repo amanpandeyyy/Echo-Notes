@@ -60,6 +60,16 @@ app.include_router(settings_router, prefix="/api")
 app.mount("/static/uploads", StaticFiles(directory=str(settings.UPLOADS_DIR)), name="uploads")
 app.mount("/static/exports", StaticFiles(directory=str(settings.EXPORTS_DIR)), name="exports")
 
+@app.get("/")
+def root():
+    return {
+        "status": "online",
+        "app": settings.APP_NAME,
+        "version": settings.VERSION,
+        "docs": "/docs",
+        "health": "/api/health"
+    }
+
 @app.get("/api/health")
 def health_check():
     return {

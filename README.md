@@ -5,6 +5,17 @@ Echo-Notes is an enterprise-grade meeting intelligence workstation that ingests 
 
 ---
 
+## 🌐 Live Cloud Deployment
+
+| Component | Status | URL |
+|---|---|---|
+| **Production Backend (Render)** | 🟢 Online | [https://echo-notes-s96t.onrender.com](https://echo-notes-s96t.onrender.com) |
+| **Interactive API Docs (Swagger UI)** | 🟢 Available | [https://echo-notes-s96t.onrender.com/docs](https://echo-notes-s96t.onrender.com/docs) |
+| **Backend Health Check** | 🟢 Healthy | [https://echo-notes-s96t.onrender.com/api/health](https://echo-notes-s96t.onrender.com/api/health) |
+| **GitHub Repository** | 📦 Public | [amanpandeyyy/Echo-Notes](https://github.com/amanpandeyyy/Echo-Notes) |
+
+---
+
 ## 🌟 Key Features
 
 1. **Multi-Source Ingestion & Preprocessing**:
