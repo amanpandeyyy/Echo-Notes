@@ -1,11 +1,12 @@
 import React from 'react';
-import { Sparkles, Plus, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Sparkles, Plus, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
 import type { PersonaType, SystemStatus } from '../types';
 
 interface HeaderProps {
   currentView: 'dashboard' | 'upload' | 'search' | 'settings';
   selectedPersona: PersonaType;
   status: SystemStatus | null;
+  backendOnline?: boolean;
   onNewMeeting: () => void;
 }
 
@@ -13,6 +14,7 @@ export const Header: React.FC<HeaderProps> = ({
   currentView,
   selectedPersona,
   status,
+  backendOnline,
   onNewMeeting
 }) => {
   const getPersonaBadge = () => {
@@ -49,6 +51,20 @@ export const Header: React.FC<HeaderProps> = ({
       </div>
 
       <div className="flex items-center gap-4">
+        {backendOnline !== undefined && (
+          <div className="hidden lg:flex items-center">
+            {backendOnline ? (
+              <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30">
+                <CheckCircle2 className="w-3.5 h-3.5" /> Backend Online
+              </span>
+            ) : (
+              <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30 animate-pulse">
+                <Loader2 className="w-3.5 h-3.5 animate-spin" /> Connecting to Backend...
+              </span>
+            )}
+          </div>
+        )}
+
         {status && (
           <div className="hidden md:flex items-center gap-3 px-3.5 py-2 bg-slate-100/90 dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700/60 rounded-xl text-xs font-medium text-slate-700 dark:text-slate-300 shadow-xs">
             {status.ffmpeg_installed ? (

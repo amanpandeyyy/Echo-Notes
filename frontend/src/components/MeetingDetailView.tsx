@@ -56,7 +56,7 @@ interface MeetingDetailViewProps {
 
 function extractYouTubeId(url?: string): string | null {
   if (!url) return null;
-  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|shorts\/|watch\?v=|\&v=)([^#\&\?]*).*/;
   const match = url.match(regExp);
   return (match && match[2].length === 11) ? match[2] : null;
 }
@@ -168,11 +168,28 @@ export const MeetingDetailView: React.FC<MeetingDetailViewProps> = ({
   };
 
   const handleActionToggle = async (action: ActionItem) => {
+    // Optimistic local state update for zero-latency UI response
+    if (meeting.summary && meeting.summary.action_items) {
+      const optimisticActions = meeting.summary.action_items.map((a) =>
+        a.id === action.id ? { ...a, completed: !a.completed } : a
+      );
+      const optimisticMeeting: Meeting = {
+        ...meeting,
+        summary: {
+          ...meeting.summary,
+          action_items: optimisticActions
+        }
+      };
+      onMeetingUpdated(optimisticMeeting);
+    }
+
     try {
       const updated = await api.toggleActionItem(meeting.id, action.id);
       onMeetingUpdated(updated);
     } catch (err) {
       console.error('Failed to toggle action item:', err);
+      // Revert to original meeting state if server fails
+      onMeetingUpdated(meeting);
     }
   };
 
@@ -308,6 +325,8 @@ export const MeetingDetailView: React.FC<MeetingDetailViewProps> = ({
             <a
               href={api.getExportUrl(meeting.id, 'pdf')}
               download
+              target="_blank"
+              rel="noopener noreferrer"
               className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-xs font-bold text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 transition-colors cursor-pointer shadow-xs"
             >
               <Download className="w-4 h-4 text-rose-500" />
@@ -316,6 +335,8 @@ export const MeetingDetailView: React.FC<MeetingDetailViewProps> = ({
             <a
               href={api.getExportUrl(meeting.id, 'docx')}
               download
+              target="_blank"
+              rel="noopener noreferrer"
               className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-xs font-bold text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 transition-colors cursor-pointer shadow-xs"
             >
               <Download className="w-4 h-4 text-blue-500" />
@@ -324,6 +345,8 @@ export const MeetingDetailView: React.FC<MeetingDetailViewProps> = ({
             <a
               href={api.getExportUrl(meeting.id, 'csv')}
               download
+              target="_blank"
+              rel="noopener noreferrer"
               className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-xs font-bold text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 transition-colors cursor-pointer shadow-xs"
             >
               <Download className="w-4 h-4 text-emerald-500" />
@@ -1559,6 +1582,8 @@ export const MeetingDetailView: React.FC<MeetingDetailViewProps> = ({
                 <a
                   href={api.getExportUrl(meeting.id, 'pdf')}
                   download
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="w-full py-3.5 rounded-2xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold shadow-md shadow-rose-600/25 transition-all text-center flex items-center justify-center gap-2 cursor-pointer"
                 >
                   <Download className="w-4 h-4" />
@@ -1580,6 +1605,8 @@ export const MeetingDetailView: React.FC<MeetingDetailViewProps> = ({
                 <a
                   href={api.getExportUrl(meeting.id, 'docx')}
                   download
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="w-full py-3.5 rounded-2xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold shadow-md shadow-blue-600/25 transition-all text-center flex items-center justify-center gap-2 cursor-pointer"
                 >
                   <Download className="w-4 h-4" />
@@ -1601,6 +1628,8 @@ export const MeetingDetailView: React.FC<MeetingDetailViewProps> = ({
                 <a
                   href={api.getExportUrl(meeting.id, 'csv')}
                   download
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="w-full py-3.5 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-md shadow-emerald-600/25 transition-all text-center flex items-center justify-center gap-2 cursor-pointer"
                 >
                   <Download className="w-4 h-4" />

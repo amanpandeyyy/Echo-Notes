@@ -16,6 +16,7 @@ export function App() {
   const [meetings, setMeetings] = useState<Meeting[]>([]);
   const [loading, setLoading] = useState(false);
   const [systemStatus, setSystemStatus] = useState<SystemStatus | null>(null);
+  const [backendOnline, setBackendOnline] = useState<boolean | undefined>(undefined);
   const [darkMode, setDarkMode] = useState(true);
 
   // Apply dark class to html document
@@ -32,8 +33,10 @@ export function App() {
     try {
       const list = await api.getMeetings();
       setMeetings(list);
+      setBackendOnline(true);
     } catch (err) {
-      console.error('Failed to fetch meetings:', err);
+      console.warn('Backend not responding yet (may be cold starting):', err);
+      setBackendOnline(false);
     } finally {
       setLoading(false);
     }
@@ -43,8 +46,9 @@ export function App() {
     try {
       const s = await api.getSystemStatus();
       setSystemStatus(s);
+      setBackendOnline(true);
     } catch (err) {
-      console.error('Failed to fetch status:', err);
+      console.warn('Status check pending:', err);
     }
   };
 
@@ -52,15 +56,18 @@ export function App() {
     fetchMeetings();
     fetchStatus();
 
-    // Auto-poll if any meeting is currently processing
+    // Auto-poll if any meeting is currently processing or backend waking up
     const interval = setInterval(() => {
       api.getMeetings().then((list) => {
         setMeetings(list);
+        setBackendOnline(true);
         if (selectedMeeting) {
           const updated = list.find((m) => m.id === selectedMeeting.id);
           if (updated) setSelectedMeeting(updated);
         }
-      }).catch(() => {});
+      }).catch(() => {
+        // Still connecting
+      });
     }, 4000);
 
     return () => clearInterval(interval);
@@ -101,11 +108,33 @@ export function App() {
           currentView={currentView}
           selectedPersona={selectedPersona}
           status={systemStatus}
+          backendOnline={backendOnline}
           onNewMeeting={() => {
             setSelectedMeeting(null);
             setCurrentView('upload');
           }}
         />
+
+        {/* Backend Cloud Wake-up / Cold Start Notification */}
+        {backendOnline === false && (
+          <div className="bg-gradient-to-r from-amber-500/10 via-amber-500/15 to-amber-500/10 border-b border-amber-500/30 px-6 py-2.5 flex items-center justify-between text-xs text-amber-700 dark:text-amber-300 transition-all">
+            <div className="flex items-center gap-2.5">
+              <span className="w-2 h-2 rounded-full bg-amber-500 animate-ping" />
+              <span className="font-semibold">
+                Cloud backend instance is waking up from sleep. This typically takes 30–45s on free-tier hosting — reconnecting automatically...
+              </span>
+            </div>
+            <button
+              onClick={() => {
+                fetchMeetings();
+                fetchStatus();
+              }}
+              className="px-3 py-1 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 font-bold border border-amber-500/40 transition-colors cursor-pointer"
+            >
+              Retry Now
+            </button>
+          </div>
+        )}
 
         <main className="flex-1 overflow-y-auto">
           {selectedMeeting ? (

@@ -68,8 +68,8 @@ def normalize_audio(input_path: str, output_path: Optional[str] = None) -> Tuple
     return output_path, duration
 
 def extract_youtube_id(url: str) -> Optional[str]:
-    """Extract 11-char YouTube video ID from various URL formats."""
-    reg_exp = r"^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*"
+    """Extract 11-char YouTube video ID from various URL formats including Shorts."""
+    reg_exp = r"^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|shorts\/|watch\?v=|\&v=)([^#\&\?]*).*"
     match = re.search(reg_exp, url)
     if match and len(match.group(2)) == 11:
         return match.group(2)
@@ -173,7 +173,7 @@ def extract_youtube_transcript(youtube_url: str, preferred_lang: str = "en") -> 
             'geo_bypass': True,
             'extractor_args': {
                 'youtube': {
-                    'player_client': ['android', 'web', 'ios', 'mweb']
+                    'player_client': ['tv_embedded', 'android', 'web', 'ios', 'mweb', 'tv']
                 }
             },
             'http_headers': {
@@ -328,7 +328,7 @@ def download_youtube_audio(youtube_url: str, output_dir: Optional[str] = None) -
         'geo_bypass': True,
         'extractor_args': {
             'youtube': {
-                'player_client': ['android', 'web', 'ios', 'mweb']
+                'player_client': ['tv_embedded', 'android', 'web', 'ios', 'mweb', 'tv']
             }
         },
         'http_headers': {

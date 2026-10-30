@@ -5,10 +5,31 @@ import type {
   SystemStatus,
   PersonaType
 } from '../types';
-export const BACKEND_URL = (import.meta.env.VITE_BACKEND_URL || 'https://echo-notes-s96t.onrender.com').replace(/\/+$/, '');
+const isLocalhost = typeof window !== 'undefined' && 
+  (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+
+export const BACKEND_URL = (
+  import.meta.env.VITE_BACKEND_URL || 
+  (isLocalhost ? 'http://localhost:8000' : 'https://echo-notes-s96t.onrender.com')
+).replace(/\/+$/, '');
+
 export const API_BASE = `${BACKEND_URL}/api`;
 
 export const api = {
+  // Connectivity & Health
+  async checkHealth(): Promise<{ status: string; app?: string; version?: string }> {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 8000);
+    try {
+      const res = await fetch(`${API_BASE}/health`, { signal: controller.signal });
+      clearTimeout(timeoutId);
+      if (!res.ok) throw new Error(`Health check returned status ${res.status}`);
+      return res.json();
+    } catch (e) {
+      clearTimeout(timeoutId);
+      throw e;
+    }
+  },
   // Meetings
   async getMeetings(params?: { search?: string; language?: string; status?: string; persona?: string }): Promise<Meeting[]> {
     const query = new URLSearchParams();
@@ -139,6 +160,10 @@ export const api = {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ key })
     });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({ message: `HTTP error ${res.status}` }));
+      return { success: false, message: err.detail || err.message || `HTTP ${res.status}` };
+    }
     return res.json();
   },
 

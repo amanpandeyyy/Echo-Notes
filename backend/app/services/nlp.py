@@ -105,7 +105,7 @@ def extract_summary_with_mistral(transcript_text: str, persona: PersonaType = Pe
         "Content-Type": "application/json"
     }
     
-    prompt = f"Meeting Title: {meeting_title}\nPersona Context: {persona.value}\n\nTranscript:\n{transcript_text[:15000]}"
+    prompt = f"Meeting Title: {meeting_title}\nPersona Context: {persona.value}\n\nTranscript:\n{transcript_text[:45000]}"
     candidate_models = [settings.MISTRAL_MODEL, "open-mistral-nemo", "open-mistral-7b", "codestral-latest"]
     
     last_error = None
@@ -125,7 +125,14 @@ def extract_summary_with_mistral(transcript_text: str, persona: PersonaType = Pe
             if response.status_code == 200:
                 res_json = response.json()
                 raw_content = res_json["choices"][0]["message"]["content"]
-                data = json.loads(raw_content)
+                
+                # Sanitize JSON response if wrapped in markdown blocks
+                clean_json_str = raw_content.strip()
+                if clean_json_str.startswith("```"):
+                    clean_json_str = re.sub(r"^```(?:json)?\s*", "", clean_json_str)
+                    clean_json_str = re.sub(r"\s*```$", "", clean_json_str)
+                    
+                data = json.loads(clean_json_str)
                 return _parse_json_to_summary(data, persona)
             elif response.status_code == 429:
                 last_error = f"Model {model_name} rate-limited: {response.text}"

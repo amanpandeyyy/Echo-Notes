@@ -217,7 +217,19 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
       </div>
 
       {/* Meeting List / Grid */}
-      {filteredMeetings.length === 0 ? (
+      {loading && filteredMeetings.length === 0 ? (
+        <div className="p-16 text-center rounded-3xl bg-white dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 space-y-4 shadow-sm animate-pulse">
+          <div className="w-14 h-14 rounded-2xl bg-sky-50 dark:bg-sky-950/40 text-sky-600 dark:text-sky-400 flex items-center justify-center mx-auto shadow-sm">
+            <Loader2 className="w-7 h-7 animate-spin" />
+          </div>
+          <div>
+            <h3 className="text-lg font-bold text-slate-900 dark:text-white">Connecting to Workspace Intelligence...</h3>
+            <p className="text-sm text-slate-500 dark:text-slate-400 mt-1 max-w-md mx-auto">
+              Fetching indexed meetings, transcripts, and action deliverables.
+            </p>
+          </div>
+        </div>
+      ) : filteredMeetings.length === 0 ? (
         <div className="p-16 text-center rounded-3xl bg-white dark:bg-slate-800/60 border border-dashed border-slate-300 dark:border-slate-700 space-y-4 shadow-sm">
           <div className="w-14 h-14 rounded-2xl bg-sky-50 dark:bg-sky-950/40 text-sky-600 dark:text-sky-400 flex items-center justify-center mx-auto shadow-sm">
             <Sparkles className="w-7 h-7" />
